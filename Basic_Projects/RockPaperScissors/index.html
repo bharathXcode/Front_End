@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rock Paper Scissor Game</title>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #ffcf1b, #ff8b1b);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            width: 45%;
+            min-width: 500px;
+            background-color: #ffffff;
+            padding: 40px 30px;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            top: 50%;
+            left: 50%;
+            border-radius: 10px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border-radius: 8px;
+        }
+
+        .scores {
+            margin-bottom: 30px;
+            text-align: right;
+            font-weight: 400;
+            font-size: 15px;
+        }
+
+        .scores span {
+            font-weight: 600;
+        }
+
+        .weapons {
+            width: 90%;
+            margin: auto;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .weapons button {
+            background-color: #ffd51b;
+            color: #000000;
+            border: none;
+            font-size: 50px;
+            height: 100px;
+            width: 100px;
+            border-radius: 50%;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .details {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        #result {
+            width: 180px;
+            padding: 10px 0;
+            margin: 30px auto;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .reset-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .reset-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 15px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bharath's Gameplay</h1>
+
+        <div class="scores">
+            <p>Computer: <span id="computer_score">0</span></p>
+            <p>You: <span id="user_score">0</span></p>
+        </div>
+
+        <div class="weapons">
+            <button onclick="checker('rock')" id="rock_btn">
+                <i class="far fa-hand-rock"></i>
+            </button>
+            <button onclick="checker('paper')" id="paper_btn">
+                <i class="far fa-hand-paper"></i>
+            </button>
+            <button onclick="checker('scissor')" id="scissor_btn">
+                <i class="far fa-hand-scissors"></i>
+            </button>
+        </div>
+
+        <div class="details">
+            <p id="user_choice"></p>
+            <p id="comp_choice"></p>
+            <p id="result"></p>
+        </div>
+
+        <div class="reset-container">
+            <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+        </div>
+    </div>
+
+    <footer>Author: Bharath</footer>
+
+    <script>
+        let [computer_score, user_score, rounds] = [0, 0, 0];
+        const result_ref = document.getElementById("result");
+
+        const choices_object = {
+            'rock': { 'rock': 'draw', 'scissor': 'win', 'paper': 'lose' },
+            'scissor': { 'rock': 'lose', 'scissor': 'draw', 'paper': 'win' },
+            'paper': { 'rock': 'win', 'scissor': 'lose', 'paper': 'draw' }
+        };
+
+        function checker(input) {
+            if (rounds >= 3) return; // Stop after 3 rounds
+
+            const choices = ["rock", "paper", "scissor"];
+            const num = Math.floor(Math.random() * 3);
+            const computer_choice = choices[num];
+
+            document.getElementById("comp_choice").innerHTML =
+                `Computer chose <span>${computer_choice.toUpperCase()}</span>`;
+            document.getElementById("user_choice").innerHTML =
+                `You chose <span>${input.toUpperCase()}</span>`;
+
+            switch (choices_object[input][computer_choice]) {
+                case 'win':
+                    result_ref.style.cssText = "background-color: #cefdce; color: #689f38";
+                    result_ref.innerHTML = "YOU WIN";
+                    user_score++;
+                    break;
+                case 'lose':
+                    result_ref.style.cssText = "background-color: #ffdde0; color: #d32f2f";
+                    result_ref.innerHTML = "YOU LOSE";
+                    computer_score++;
+                    break;
+                default:
+                    result_ref.style.cssText = "background-color: #e5e5e5; color: #808080";
+                    result_ref.innerHTML = "DRAW";
+                    break;
+            }
+
+            rounds++;
+            document.getElementById("computer_score").innerHTML = computer_score;
+            document.getElementById("user_score").innerHTML = user_score;
+
+            if (rounds === 3) {
+                declareFinalResult();
+            }
+        }
+
+        function declareFinalResult() {
+            if (user_score > computer_score) {
+                result_ref.innerHTML = "🎉 You Won Best of 3!";
+                result_ref.style.cssText = "background-color: #cefdce; color: #689f38";
+            } else if (user_score < computer_score) {
+                result_ref.innerHTML = "💔 You Lost Best of 3!";
+                result_ref.style.cssText = "background-color: #ffdde0; color: #d32f2f";
+            } else {
+                result_ref.innerHTML = "🤝 It's a Tie!";
+                result_ref.style.cssText = "background-color: #e5e5e5; color: #808080";
+            }
+            disableButtons();
+        }
+
+        function disableButtons() {
+            document.getElementById("rock_btn").disabled = true;
+            document.getElementById("paper_btn").disabled = true;
+            document.getElementById("scissor_btn").disabled = true;
+        }
+
+        function enableButtons() {
+            document.getElementById("rock_btn").disabled = false;
+            document.getElementById("paper_btn").disabled = false;
+            document.getElementById("scissor_btn").disabled = false;
+        }
+
+        function resetGame() {
+            [computer_score, user_score, rounds] = [0, 0, 0];
+            document.getElementById("computer_score").innerHTML = "0";
+            document.getElementById("user_score").innerHTML = "0";
+            document.getElementById("user_choice").innerHTML = "";
+            document.getElementById("comp_choice").innerHTML = "";
+            result_ref.innerHTML = "";
+            result_ref.style.cssText = "";
+            enableButtons();
+        }
+    </script>
+</body>
+</html>
